@@ -1,11 +1,10 @@
-const task = require('../models/task');
 const Tasks = require ('../models/task')
 
 //get all task
 const getAlltask = async (req, res)=>{
 try {
     const tasks = await Tasks.find();
-    res.staus(200).json({success: true, tasks})
+    res.status(200).json({success: true, tasks})
 } catch (error) {
     console.log(error);
 }
@@ -15,8 +14,8 @@ try {
 const getAtask = async (req, res)=>{
     const {taskId} = req.params
   try {
-    const task = await Tasks.findById();
-    res.status(200).json({success: true, taskId})
+    const task = await Tasks.findById({_id: taskId});
+    res.status(200).json({success: true, task})
   } catch (error) {
     console.log(error);
   }
@@ -39,16 +38,24 @@ try {
 //update a task
 const updateTask = async (req, res) =>{
     const {taskId} = req.params
-    const task = await Tasks.findByIdAndUpdate({taskId}, req.body, {
+  try {
+    const task = await Tasks.findByIdAndUpdate({_id: taskId}, req.body, {
         new: true,
         runvalidators: true,});
         res.status(200).json({success: true, task})
+  } catch (error) {
+    res.json(error);
+  }
 }
 //delete a task
 const deleteTask = async (req, res) =>{
     const {taskId} = req.params
-    const task = await Tasks.findByIdAndDelete({taskId})
+    try {
+        const task = await Tasks.findByIdAndDelete({_id: taskId})
 res.status(200).json({success: true, msg:'Task Deleted'})
+    } catch (error) {
+console.log(error);
+    }
 }
 
 module.exports = {getAlltask, getAtask, createTask, updateTask, deleteTask}
